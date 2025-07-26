@@ -7,23 +7,23 @@ const About = () => {
   return (
     <Result
       status="info"
-      title={'IDURAR'}
+      title={'WebSeeder Technologies'}
       subTitle={translate('Do you need help on customize of this app')}
       extra={
         <>
           <p>
-            Website : <a href="https://www.idurarapp.com">www.idurarapp.com</a>{' '}
+            Website : <a href="https://www.webseeder.in/">https://www.webseeder.in/</a>{' '}
           </p>
-          <p>
+          {/* <p>
             GitHub :{' '}
             <a href="https://github.com/idurar/idurar-erp-crm">
               https://github.com/idurar/idurar-erp-crm
             </a>
-          </p>
+          </p> */}
           <Button
             type="primary"
             onClick={() => {
-              window.open(`https://www.idurarapp.com/contact-us/`);
+              window.open(`https://www.webseeder.in/contact-us/`);
             }}
           >
             {translate('Contact us')}

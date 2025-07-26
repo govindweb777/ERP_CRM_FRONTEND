@@ -29,6 +29,8 @@ const Profile = lazy(() => import('@/pages/Profile'));
 
 const About = lazy(() => import('@/pages/About'));
 
+const Register = lazy(() => import ('@/pages/Register'))
+
 let routes = {
   expense: [],
   default: [
@@ -52,7 +54,10 @@ let routes = {
       path: '/customer',
       element: <Customer />,
     },
-
+    {
+      path: '/register',
+      element: <Register />,
+    },
     {
       path: '/invoice',
       element: <Invoice />,

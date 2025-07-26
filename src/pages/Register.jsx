@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,21 +6,20 @@ import useLanguage from '@/locale/useLanguage';
 
 import { Form, Button } from 'antd';
 
-import { login } from '@/redux/auth/actions';
+import { register } from '@/redux/auth/actions';
 import { selectAuth } from '@/redux/auth/selectors';
-import LoginForm from '@/forms/LoginForm';
+import RegisterForm from '@/forms/RegisterForm';
 import Loading from '@/components/Loading';
 import AuthModule from '@/modules/AuthModule';
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const translate = useLanguage();
   const { isLoading, isSuccess } = useSelector(selectAuth);
   const navigate = useNavigate();
-  // const size = useSize();
-
   const dispatch = useDispatch();
+
   const onFinish = (values) => {
-    dispatch(login({ loginData: values }));
+    dispatch(register({ registerData: values }));
   };
 
   useEffect(() => {
@@ -33,34 +31,32 @@ const LoginPage = () => {
       <Loading isLoading={isLoading}>
         <Form
           layout="vertical"
-          name="normal_login"
-          className="login-form"
-          initialValues={{
-            remember: true,
-          }}
+          name="register_form"
+          className="register-form"
+          initialValues={{ remember: true }}
           onFinish={onFinish}
         >
-          <LoginForm />
+          <RegisterForm />
           <Form.Item>
             <Button
               type="primary"
               htmlType="submit"
-              className="login-form-button"
+              className="register-form-button"
               loading={isLoading}
               size="large"
             >
-              {translate('Log in')}
+              {translate('Register')}
             </Button>
-            <a className="" href="/register" style={{ marginLeft: '0px' }}>
-          {translate('Register Now')}
-        </a>
+            <a href="/" style={{ marginLeft: '10px' }}>
+              {translate('Back to Login')}
+            </a>
           </Form.Item>
         </Form>
       </Loading>
     );
   };
 
-  return <AuthModule authContent={<FormContainer />} AUTH_TITLE="Sign in" />;
+  return <AuthModule authContent={<FormContainer />} AUTH_TITLE="Register" />;
 };
 
-export default LoginPage;
+export default RegisterPage;
