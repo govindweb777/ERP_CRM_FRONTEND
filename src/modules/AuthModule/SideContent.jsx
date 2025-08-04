@@ -87,7 +87,7 @@ export default function SideContent() {
             width={100}
             style={{ display: 'block' }}
           />
-          <div style={{ fontSize: '1.5rem', fontWeight: 600 }}>
+          <div className='text-2xl font-semibold'>
            WebSeeder Technologies
           </div>
         </div>

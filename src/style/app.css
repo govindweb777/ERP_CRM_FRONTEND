@@ -1,4 +1,4 @@
-@import './partials/rest.css';
+/* @import './partials/rest.css';
 @import './partials/customAntd.css';
 @import './partials/layout.css';
 @import './partials/core.css';
@@ -9,3 +9,11 @@
 @import './partials/sidePanel.css';
 @import './partials/collapseBox.css';
 @import './partials/erp.css';
+
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
