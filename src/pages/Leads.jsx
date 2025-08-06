@@ -1131,9 +1131,10 @@ import { Plus, Mail, Phone, MapPin, FileText, Edit, Trash2, Filter, Calendar } f
 // Define options at the top level for shared access
 const statusOptions = [
   { id: 1, option: 'Not Sure' },
-  { id: 2, option: 'Interested' },
-  { id: 3, option: 'Not Interested' },
-  { id: 4, option: 'Follow Up' },
+  { id: 2, option: 'Completed' },
+  { id: 3, option: 'Under Conversation' },
+  { id: 4, option: 'Deal Closed' },
+  {id:5,option:'Under Process'}
 ];
 
 const sourceOptions = [
