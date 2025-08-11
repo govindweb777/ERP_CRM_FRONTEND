@@ -32,6 +32,8 @@ const About = lazy(() => import('@/pages/About'));
 const Register = lazy(() => import ('@/pages/Register'))
 const Leads = lazy(() => import ('@/pages/Leads'))
 
+const User = lazy(() => import ('@/pages/User'))
+
 let routes = {
   expense: [],
   default: [
@@ -132,6 +134,10 @@ let routes = {
     {
       path: '/leads',
       element: <Leads />,
+    },
+    {
+      path: '/user',
+      element: <User />,
     },
     {
       path: '*',
