@@ -106,6 +106,17 @@ const CreateUserModal = ({ visible, onClose, onCreate }) => {
         >
           <Input.Password />
         </Form.Item>
+        <Form.Item
+          label={translate('Role')}
+          name="role"
+          rules={[{ required: true, message: translate('Please select a role!') }]}
+        >
+          <select style={{ width: '100%', padding: '8px', borderRadius: '4px' }}>
+            <option value="owner">Owner</option>
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
+          </select>
+        </Form.Item>
         <Form.Item>
           <Button
             type="primary"
@@ -162,13 +173,13 @@ const UserManagement = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const endpoint = filterActive ? 'get-active-users' : 'get-all';
+      const endpoint = filterActive ? 'get-active-users' : 'get-All';
       const response = await fetch(`${VITE_FILE_BASE_URL}api/v1/user/${endpoint}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       let result = await response.json();
       if (result.success) {
-        result = result.data || [];
+        result = result.admins || [];
         if (searchTerm) {
           result = result.filter(
             (user) =>
@@ -233,7 +244,7 @@ const UserManagement = () => {
   const toggleUserStatus = async (id, isEnabled) => {
     setLoading(true);
     try {
-      const endpoint = isEnabled ? 'disable-user' : 'enable-user';
+      const endpoint = isEnabled ? 'disable' : 'enable';
       const response = await fetch(`${VITE_FILE_BASE_URL}api/v1/user/${endpoint}/${id}`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` },
@@ -742,7 +753,7 @@ const UserManagement = () => {
                         </td>
                         <td style={{ padding: '16px', fontSize: 14, color: '#00000080' }}>
                           <div style={{ display: 'flex', gap: 8 }}>
-                            <button
+                            {/* <button
                               onClick={() => alert('Edit functionality not implemented yet')}
                               style={{
                                 color: '#2563eb',
@@ -753,8 +764,8 @@ const UserManagement = () => {
                               title={translate('Edit User')}
                             >
                               <Edit size={18} />
-                            </button>
-                            <button
+                            </button> */}
+                            {/* <button
                               onClick={() => deleteUser(user._id)}
                               style={{
                                 color: '#e11d48',
@@ -765,7 +776,7 @@ const UserManagement = () => {
                               title={translate('Delete User')}
                             >
                               <Trash2 size={18} />
-                            </button>
+                            </button> */}
                             <button
                               onClick={() => toggleUserStatus(user._id, user.enabled)}
                               style={{
