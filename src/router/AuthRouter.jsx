@@ -14,7 +14,7 @@ export default function AuthRouter() {
 
   return (
     <Routes>
-      <Route element={<Login />} path="/" />
+      <Route element={<Login />} path="/dashboard" />
       <Route element={<Login />} path="/login" />
       <Route element={<Register />} path="/register" />
       <Route element={<Navigate to="/login" replace />} path="/logout" />

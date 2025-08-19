@@ -1,10 +1,9 @@
-'use client';
-
 import React, { useState, useEffect, useRef } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { RxTriangleDown, RxCross2 } from 'react-icons/rx';
 import { Filter, Mail, Edit, Trash2, Calendar } from 'lucide-react';
 import CreateLeadModal from './CreateLeadModal';
+import EditLeadModal from './EditLeadModal';
 import RemindersModal from './ReminderModal';
 
 const statusOptions = [
@@ -23,10 +22,12 @@ const sourceOptions = [
   { id: 5, option: 'Other' },
 ];
 
-const LeadTable = ({ onEditLead, campaignId }) => {
+const LeadTable = ({ campaignId }) => {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [selectedLead, setSelectedLead] = useState(null);
   const [filterActive, setFilterActive] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState([]);
@@ -37,9 +38,13 @@ const LeadTable = ({ onEditLead, campaignId }) => {
   const [showRemindersModal, setShowRemindersModal] = useState(false);
   const [selectedLeadForReminders, setSelectedLeadForReminders] = useState(null);
   const [reminders, setReminders] = useState([]);
+  const [assignedToFilter, setAssignedToFilter] = useState('');
+  const [assignedUsers, setAssignedUsers] = useState([]);
+  const [isAssignedToDropdownOpen, setIsAssignedToDropdownOpen] = useState(false);
   const containerRef = useRef(null);
   const statusRef = useRef(null);
   const sourceRef = useRef(null);
+  const assignedToRef = useRef(null);
 
   const VITE_FILE_BASE_URL = import.meta.env.VITE_FILE_BASE_URL || 'http://localhost:3000/';
   const authString = localStorage.getItem('auth');
@@ -61,33 +66,59 @@ const LeadTable = ({ onEditLead, campaignId }) => {
     'Status',
     'Industry',
     'City',
+    'Assigned To',
     'Created At',
   ];
 
   const fetchLeads = async () => {
     setLoading(true);
     try {
-      const endpoint = filterActive ? 'get-active-lead' : 'get-all';
-      const response = await fetch(`${VITE_FILE_BASE_URL}api/v1/lead/${endpoint}`, {
+      const response = await fetch(`${VITE_FILE_BASE_URL}api/v1/lead/get-all`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      let result = await response.json();
+      const result = await response.json();
       if (result.success) {
-        result = result.data || [];
+        const allLeads = result.data || [];
+        const uniqueAssignedToIds = [...new Set(allLeads.map((lead) => lead.assignedTo))];
+        setAssignedUsers(uniqueAssignedToIds.map((id) => ({ _id: id, name: id })));
+
+        const leadsByAssignedTo = [];
+        for (const assignedToId of uniqueAssignedToIds) {
+          const assignedResponse = await fetch(
+            `${VITE_FILE_BASE_URL}api/v1/lead/get-assign/${assignedToId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          const assignedResult = await assignedResponse.json();
+          if (assignedResult.success) {
+            leadsByAssignedTo.push(...(assignedResult.leads || []));
+          } else {
+            console.error(`Failed to fetch leads for assignedTo ${assignedToId}:`, assignedResult.message);
+          }
+        }
+
+        let filteredLeads = leadsByAssignedTo;
+        if (assignedToFilter) {
+          filteredLeads = filteredLeads.filter((lead) => lead.assignedTo._id === assignedToFilter);
+        }
+        if (filterActive) {
+          filteredLeads = filteredLeads.filter((lead) => lead.isActive);
+        }
         if (searchTerm) {
-          result = result.filter(
+          filteredLeads = filteredLeads.filter(
             (lead) =>
               lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
               lead.email.toLowerCase().includes(searchTerm.toLowerCase())
           );
         }
         if (statusFilter.length > 0) {
-          result = result.filter((lead) => statusFilter.includes(lead.status));
+          filteredLeads = filteredLeads.filter((lead) => statusFilter.includes(lead.status));
         }
         if (sourceFilter.length > 0) {
-          result = result.filter((lead) => sourceFilter.includes(lead.source));
+          filteredLeads = filteredLeads.filter((lead) => sourceFilter.includes(lead.source));
         }
-        setLeads(result);
+        setLeads(filteredLeads);
       } else {
         console.error('Failed to fetch leads:', result.message);
       }
@@ -199,16 +230,22 @@ const LeadTable = ({ onEditLead, campaignId }) => {
     }
   };
 
+  const handleEditLead = (lead) => {
+    setSelectedLead(lead);
+    setShowEditForm(true);
+  };
+
   const handleClearFilters = () => {
     setSearchTerm('');
     setStatusFilter([]);
     setSourceFilter([]);
+    setAssignedToFilter('');
     fetchLeads();
   };
 
   useEffect(() => {
     fetchLeads();
-  }, [filterActive, statusFilter, sourceFilter]);
+  }, [filterActive, statusFilter, sourceFilter, assignedToFilter]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -217,6 +254,9 @@ const LeadTable = ({ onEditLead, campaignId }) => {
       }
       if (sourceRef.current && !sourceRef.current.contains(event.target)) {
         setIsSourceDropdownOpen(false);
+      }
+      if (assignedToRef.current && !assignedToRef.current.contains(event.target)) {
+        setIsAssignedToDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -234,7 +274,6 @@ const LeadTable = ({ onEditLead, campaignId }) => {
     });
   };
 
-  // ...existing code...
   return (
     <main
       style={{
@@ -477,6 +516,87 @@ const LeadTable = ({ onEditLead, campaignId }) => {
               )}
             </div>
 
+            <div style={{ position: 'relative' }} ref={assignedToRef}>
+              <button
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  background: 'linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.12))',
+                  padding: 10,
+                  borderRadius: 10,
+                  fontSize: 14,
+                  border: '1px solid #d1d5db',
+                  cursor: 'pointer',
+                }}
+                onClick={() => setIsAssignedToDropdownOpen((p) => !p)}
+              >
+                <span style={{ fontSize: 14 }}>Assigned To</span>
+                <RxTriangleDown
+                  size={16}
+                  style={{
+                    marginLeft: 12,
+                    transform: isAssignedToDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.3s',
+                  }}
+                />
+              </button>
+              {isAssignedToDropdownOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    marginTop: 2,
+                    top: '100%',
+                    minWidth: 150,
+                    background: '#fff',
+                    border: '1px solid #2222',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                    zIndex: 50,
+                    maxHeight: 192,
+                    borderRadius: 10,
+                    overflowY: 'auto',
+                  }}
+                >
+                  <p
+                    style={{
+                      margin: 4,
+                      padding: '4px 8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      cursor: 'pointer',
+                      fontSize: 12,
+                      color: '#222',
+                      background: assignedToFilter === '' ? '#E9F5F0' : '#fff',
+                      borderRadius: 6,
+                    }}
+                    onClick={() => setAssignedToFilter('')}
+                  >
+                    All Users
+                  </p>
+                  {assignedUsers.map((user) => (
+                    <p
+                      key={user._id}
+                      style={{
+                        margin: 4,
+                        padding: '4px 8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                        fontSize: 12,
+                        color: '#222',
+                        background: assignedToFilter === user._id ? '#E9F5F0' : '#fff',
+                        borderRadius: 6,
+                      }}
+                      onClick={() => setAssignedToFilter(user._id)}
+                    >
+                      {user.name || user._id}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <button
               onClick={() => setShowCreateForm(true)}
               style={{
@@ -581,7 +701,38 @@ const LeadTable = ({ onEditLead, campaignId }) => {
                   />
                 </p>
               ))}
-              {(searchTerm || statusFilter.length > 0 || sourceFilter.length > 0) && (
+              {assignedToFilter && (
+                <p
+                  style={{
+                    background: '#F4BB3F',
+                    borderRadius: 6,
+                    color: '#fff',
+                    padding: '2px 8px',
+                    fontSize: 12,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                >
+                  <span>
+                    {assignedUsers.find((user) => user._id === assignedToFilter)?.name || assignedToFilter}
+                  </span>
+                  <RxCross2
+                    style={{
+                      borderRadius: '50%',
+                      position: 'relative',
+                      top: -1,
+                      border: '2px solid #fff',
+                      padding: 1,
+                      boxSizing: 'content-box',
+                      cursor: 'pointer',
+                    }}
+                    size={10}
+                    onClick={() => setAssignedToFilter('')}
+                  />
+                </p>
+              )}
+              {(searchTerm || statusFilter.length > 0 || sourceFilter.length > 0 || assignedToFilter) && (
                 <button
                   type="button"
                   style={{
@@ -647,7 +798,7 @@ const LeadTable = ({ onEditLead, campaignId }) => {
                   {leads.length === 0 && !loading ? (
                     <tr>
                       <th
-                        colSpan={10}
+                        colSpan={11}
                         style={{
                           padding: '12px 16px',
                           fontSize: 12,
@@ -703,14 +854,14 @@ const LeadTable = ({ onEditLead, campaignId }) => {
                 <tbody style={{ background: '#fff' }}>
                   {loading && leads.length === 0 ? (
                     <tr>
-                      <td colSpan="10" style={{ padding: '32px 16px', textAlign: 'center' }}>
+                      <td colSpan="11" style={{ padding: '32px 16px', textAlign: 'center' }}>
                         <p style={{ color: '#888', fontWeight: 500 }}>Loading...</p>
                       </td>
                     </tr>
                   ) : leads.length === 0 ? (
                     <tr>
                       <td
-                        colSpan="10"
+                        colSpan="11"
                         style={{
                           color: '#888',
                           fontWeight: 500,
@@ -834,12 +985,22 @@ const LeadTable = ({ onEditLead, campaignId }) => {
                             borderRight: '1px solid #2222',
                           }}
                         >
+                          {lead.assignedTo?.name || lead.assignedTo?._id || 'N/A'}
+                        </td>
+                        <td
+                          style={{
+                            padding: '16px',
+                            fontSize: 14,
+                            color: '#00000080',
+                            borderRight: '1px solid #2222',
+                          }}
+                        >
                           {formatDate(lead.createdAt)}
                         </td>
                         <td style={{ padding: '16px', fontSize: 14, color: '#00000080' }}>
                           <div style={{ display: 'flex', gap: 8 }}>
                             <button
-                              onClick={() => onEditLead(lead)}
+                              onClick={() => handleEditLead(lead)}
                               style={{
                                 color: '#2563eb',
                                 background: 'none',
@@ -899,7 +1060,7 @@ const LeadTable = ({ onEditLead, campaignId }) => {
                   {loading && leads.length > 0 && (
                     <tr>
                       <td
-                        colSpan={10}
+                        colSpan={11}
                         style={{
                           textAlign: 'center',
                           padding: '32px 16px',
@@ -941,6 +1102,21 @@ const LeadTable = ({ onEditLead, campaignId }) => {
           onCreate={() => {
             fetchLeads();
             setShowCreateForm(false);
+          }}
+        />
+      )}
+
+      {showEditForm && selectedLead && (
+        <EditLeadModal
+          lead={selectedLead}
+          onClose={() => {
+            setShowEditForm(false);
+            setSelectedLead(null);
+          }}
+          onUpdate={() => {
+            fetchLeads();
+            setShowEditForm(false);
+            setSelectedLead(null);
           }}
         />
       )}
