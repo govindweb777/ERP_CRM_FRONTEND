@@ -112,6 +112,7 @@ export default function PaymentMode() {
     deleteModalLabels,
   };
   return (
+    // <></>
     <CrudModule
       createForm={<PaymentModeForm />}
       updateForm={<PaymentModeForm isUpdateForm={true} />}

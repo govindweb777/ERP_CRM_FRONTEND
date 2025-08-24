@@ -3,8 +3,8 @@ import { Tabs, Row, Col } from 'antd';
 const SettingsLayout = ({ children }) => {
   return (
     <Col className="gutter-row" order={0}>
-      <div className="whiteBox shadow" style={{ minHeight: '480px' }}>
-        <div className="pad40">{children}</div>
+      <div className="" style={{ minHeight: '480px' }}>
+        <div className="">{children}</div>
       </div>
     </Col>
   );
@@ -13,7 +13,8 @@ const SettingsLayout = ({ children }) => {
 const TopCard = ({ pageTitle }) => {
   return (
     <div
-      className="whiteBox shadow"
+      // className="whiteBox shadow"
+      className=''
       style={{
         color: '#595959',
         fontSize: 13,
@@ -40,7 +41,7 @@ const RightMenu = ({ children, pageTitle }) => {
       order={1}
     >
       <TopCard pageTitle={pageTitle} />
-      <div className="whiteBox shadow">
+      <div className="">
         <div className="pad25" style={{ width: '100%', paddingBottom: 0 }}>
           {children}
         </div>

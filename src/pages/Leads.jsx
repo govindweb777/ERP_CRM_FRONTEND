@@ -284,7 +284,7 @@ const LeadTable = ({ campaignId }) => {
       }}
     >
       <section>
-        <div
+        {/* <div
           style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -333,9 +333,9 @@ const LeadTable = ({ campaignId }) => {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
 
-        <div style={{ background: '#fff', borderRadius: 10, padding: 16, marginBottom: 24 }}>
+        <div style={{ background: '#fff', borderRadius: 10, padding: 8, marginBottom: 24 }}>
           <div
             style={{
               display: 'flex',
@@ -605,7 +605,7 @@ const LeadTable = ({ campaignId }) => {
                 borderRadius: 10,
                 fontSize: 14,
                 fontWeight: 500,
-                background: '#E96D70',
+                background: '#52A19e',
                 color: '#fff',
                 cursor: 'pointer',
                 border: 'none',
@@ -636,7 +636,7 @@ const LeadTable = ({ campaignId }) => {
             </button>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 16 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 6 }}>
             <p style={{ fontSize: 14, whiteSpace: 'nowrap' }}>
               Showing results for {leads.length.toLocaleString() || 0} Leads
             </p>
@@ -756,9 +756,9 @@ const LeadTable = ({ campaignId }) => {
 
         <div
           style={{
-            background: '#F5F5F5',
+            background: '',
             position: 'relative',
-            padding: '20px 0',
+            padding: '0px 0',
             marginLeft: -32,
             marginRight: -32,
             boxSizing: 'border-box',
@@ -775,7 +775,7 @@ const LeadTable = ({ campaignId }) => {
             <div
               style={{
                 borderRadius: 10,
-                border: '1px solid #76E4B6',
+                border: '1px solid #f5f5f5',
                 marginLeft: 32,
                 marginRight: 32,
                 maxHeight: 430,
@@ -794,7 +794,7 @@ const LeadTable = ({ campaignId }) => {
                   tableLayout: leads.length === 0 && !loading ? 'fixed' : undefined,
                 }}
               >
-                <thead style={{ background: '#CDE4DA', position: 'sticky', top: 0, zIndex: 25 }}>
+                <thead style={{ background: '#F5F5F5', position: 'sticky', top: 0, zIndex: 25 }}>
                   {leads.length === 0 && !loading ? (
                     <tr>
                       <th
@@ -817,7 +817,7 @@ const LeadTable = ({ campaignId }) => {
                           position: 'sticky',
                           left: 0,
                           zIndex: 50,
-                          background: '#CDE4DA',
+                          background: '#F5F5F5',
                         }}
                       ></th>
                       {tableHeadings.map((heading, i) => (

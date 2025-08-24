@@ -729,9 +729,9 @@ const UserManagement = () => {
       : 'N/A';
 
   return (
-    <main style={{minHeight:'100vh', fontFamily:'sans-serif', padding:16, background:'#f7f7f7'}}>
+    <main style={{minHeight:'100vh', fontFamily:'sans-serif', padding:16, background:''}}>
       <section>
-        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:18}}>
+        {/* <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:18}}>
           <h1 style={{fontSize:20, fontWeight:600}}>{translate('User Management')}</h1>
           <div>
             <button
@@ -742,9 +742,9 @@ const UserManagement = () => {
               {filterActive ? translate('Show All Users') : translate('Show Active Users')}
             </button>
           </div>
-        </div>
+        </div> */}
 
-        <div style={{background:'#fff', borderRadius:8, padding:16, marginBottom:24, boxShadow:'0 1px 4px rgba(0,0,0,0.04)'}}>
+        <div style={{background:'#fff', borderRadius:8, padding:8, marginBottom:24, boxShadow:'0 1px 4px rgba(0,0,0,0.04)'}}>
           <div style={{display:'flex', flexWrap:'wrap', alignItems:'center', gap:12, marginBottom:16}}>
             <div style={{position:'relative', flexGrow:1, minWidth:180, maxWidth:320, border:'1.5px solid #e5e7eb', borderRadius:7}}>
               <input
@@ -779,21 +779,33 @@ const UserManagement = () => {
                     <p
                       key={item.id}
                       onClick={() => handleRoleToggle(item)}
-                      style={{margin:4, padding:7, display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer', fontSize:13, color:'#222', borderRadius:5, background: roleFilter.includes(item.option) ? '#d1fae5' : 'transparent'}}
+                      style={{margin:4, padding:7, display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer', fontSize:13, color:'#222', borderRadius:5, background: roleFilter.includes(item.option) ? '' : 'transparent'}}
                     >
                       {item.option}
                     </p>
                   ))}
                 </div>
               )}
+
+              
             </div>
 
             <button
               onClick={() => setShowCreateForm(true)}
-              style={{padding:'7px 18px', borderRadius:7, background:'#ef4444', color:'#fff', fontWeight:500, fontSize:13, border:'none', cursor:'pointer'}}
+              style={{padding:'7px 18px', borderRadius:7, background:'#52A19e', color:'#fff', fontWeight:500, fontSize:13, border:'none', cursor:'pointer'}}
             >
               {translate('Add User')}
             </button>
+
+              {/* <div>
+            <button
+              onClick={() => setFilterActive(!filterActive)}
+              style={{display:'flex', alignItems:'center', gap:6, padding:'6px 14px', borderRadius:7, background:'#e3f0ff', color:'#2563eb', fontWeight:500, fontSize:13, border:'none', cursor:'pointer'}}
+            >
+              <Filter size={16} />
+              {filterActive ? translate('Show All Users') : translate('Show Active Users')}
+            </button>
+          </div> */}
           </div>
 
           <div style={{display:'flex', flexDirection:'column', gap:6}}>
@@ -827,13 +839,13 @@ const UserManagement = () => {
           </div>
         </div>
 
-        <div style={{background:'', position:'relative', padding:20, marginLeft:-24, marginRight:-24}}>
+        <div style={{background:'', position:'relative', padding:0, marginLeft:-24, marginRight:-24}}>
           {loading && users.length === 0 ? (
             <p style={{textAlign:'center', padding:'40px 0', color:'#666', fontWeight:500}}>{translate('Loading...')}</p>
           ) : (
-            <div style={{borderRadius:8, border:'1.5px solid #6ee7b7', marginLeft:24, marginRight:24, maxHeight:430, overflowY:'auto', overflowX:'auto', background:'#fff'}}>
+            <div style={{borderRadius:8, border:'1.5px solid #f5f5f5', marginLeft:24, marginRight:24, maxHeight:430, overflowY:'auto', overflowX:'auto', background:'#fff'}}>
               <table style={{minWidth:'100%', borderCollapse:'collapse', fontSize:13}}>
-                <thead style={{background:'#d1fae5', position:'sticky', top:0, zIndex:10}}>
+                <thead style={{background:'#f5f5f5', position:'sticky', top:0, zIndex:10}}>
                   {users.length === 0 && !loading ? (
                     <tr>
                       <th style={{padding:10, fontSize:13, fontWeight:600, textAlign:'center'}} colSpan={7}>
@@ -842,16 +854,16 @@ const UserManagement = () => {
                     </tr>
                   ) : (
                     <tr>
-                      <th style={{padding:10, position:'sticky', left:0, zIndex:20, background:'#d1fae5'}}></th>
+                      <th style={{padding:10, position:'sticky', left:0, zIndex:20, background:''}}></th>
                       {tableHeadings.map((heading, i) => (
                         <th
                           key={i}
-                          style={{padding:10, textAlign:'left', fontSize:11, fontWeight:600, textTransform:'uppercase', borderRight:'1px solid #e5e7eb', background:'#d1fae5'}}
+                          style={{padding:10, textAlign:'left', fontSize:11, fontWeight:600, textTransform:'uppercase', borderRight:'1px solid #e5e7eb', background:''}}
                         >
                           {translate(heading)}
                         </th>
                       ))}
-                      <th style={{padding:10, textAlign:'left', fontSize:11, fontWeight:600, textTransform:'uppercase', background:'#d1fae5'}}>{translate('Actions')}</th>
+                      <th style={{padding:10, textAlign:'left', fontSize:11, fontWeight:600, textTransform:'uppercase', background:''}}>{translate('Actions')}</th>
                     </tr>
                   )}
                 </thead>

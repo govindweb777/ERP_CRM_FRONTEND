@@ -306,11 +306,11 @@ function Sidebar({ collapsible, isMobile = false }) {
       icon: <UserOutlined />,
       label: <Link to={'/user'}>{translate('user')}</Link>,
     },
-    {
-      key: 'customer',
-      icon: <CustomerServiceOutlined />,
-      label: <Link to={'/customer'}>{translate('customers')}</Link>,
-    },
+    // {
+    //   key: 'customer',
+    //   icon: <CustomerServiceOutlined />,
+    //   label: <Link to={'/customer'}>{translate('customers')}</Link>,
+    // },
     {
       key: 'invoice',
       icon: <ContainerOutlined />,
